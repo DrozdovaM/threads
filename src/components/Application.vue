@@ -100,6 +100,21 @@
 
           </v-arrow>
         </div>
+        <v-arrow
+            v-for="arrow4 in configArrow4"
+            :key="arrow4.id"
+            :config="{
+              x: arrow4.x,
+              y: 185,
+              points: arrow4.points,
+              pointerLength: 5,
+              pointerWidth: 5,
+              fill: 'black',
+              stroke: 'black',
+              strokeWidth: 2}"
+                  >
+
+        </v-arrow>
         <v-rect
             :config="configDB">
         </v-rect>
@@ -154,14 +169,14 @@ export default {
         }
       ],
       configEllipse: {
-        x: width/2 + 50,
+        x: 60,
         y: 430,
         radiusX: 45,
         radiusY: 30,
         stroke: 'black'
       },
       configDB: {
-        x: width/2,
+        x: 10,
         y: 400,
         width: 100,
         height: 100,
@@ -183,7 +198,13 @@ export default {
         {
           x: 85,
         }
-      ]
+      ],
+      configArrow4 : [
+        {
+          x: 60,
+          points: [0, 0, 0, 400 - 185],
+        }
+      ],
     }
   },
   methods: {
@@ -232,25 +253,45 @@ export default {
                 x: this.configArrow2[this.configArrow2.length - 1].x + 150
               }
           );
-          this.configArrow3.push({
-            x: this.configArrow2[this.configArrow2.length - 1].x + 25
+          if (this.configRect.length - 2) {
+            this.configArrow3.push({
+              x: this.configArrow3[this.configArrow3.length - 1].x + 150
+            });
+          }
+          this.configDB.x += 75;
+          this.configEllipse.x += 75;
+          let circleX = this.configCircle[this.configCircle.length - 1].x;
+          this.configArrow4.push({
+            x: circleX,
+            points: [0, 0, this.configEllipse.x - circleX, 400 - 185],
           });
+
         }
+        this.configArrow4.forEach((arrow, i) => {
+          let circleX2 = this.configCircle[i * 2].x
+          this.configArrow4[i].points = [0, 0, this.configEllipse.x - circleX2, 400 - 185];
+        });
       } else {
+        const difference = this.configRect.length - (this.configRect.length - number);
+        const test = this.configRect.length - difference;
           while (this.configRect.length > number) {
             const difference = this.configRect.length - (this.configRect.length - number);
+            const test = this.configRect.length - difference;
             this.configCircle.splice(difference * 2, number * 2);
             this.configRect.splice(difference, number);
             this.configArrow1.splice(difference, number);
             this.configArrow2.splice(difference, number);
             this.configArrow3.splice(difference, number);
-
+            this.configArrow4.splice(difference, number);
           }
+        this.configDB.x -= 75 * (test);
+        this.configEllipse.x -= 75 * (test);
+        this.configArrow3.splice(this.configArrow4.length - 1, 1);
+        this.configArrow4.forEach((arrow, i) => {
+          let circleX = this.configCircle[i * 2].x
+          this.configArrow4[i].points = [0, 0, this.configEllipse.x - circleX, 400 - 185];
+        });
         }
-      // new LeaderLine(document.getElementById("rect"), document.getElementById("db"), {
-      //   color: "red",
-      //   size: 3
-      // });
     }
   }
 }
